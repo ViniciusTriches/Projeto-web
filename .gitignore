@@ -1,0 +1,23 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+*.log
+
+## NuGet
+*.nupkg
+packages/
+
+## Publish
+/publish/
+/out/
+
+## Local config
+appsettings.Development.json
+
+## OS
+.DS_Store
+Thumbs.db
