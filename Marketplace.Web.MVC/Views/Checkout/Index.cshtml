@@ -1,0 +1,195 @@
+@model Marketplace.Web.MVC.Models.ViewModels.CheckoutViewModel
+@using Marketplace.Web.MVC.Models.ApiContracts.Pagamentos
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-credit-card me-2"></i>Finalizar Compra</h4>
+</div>
+
+<form asp-action="Confirmar" method="post">
+    <div class="row g-4">
+        <!-- Endereço de entrega -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white fw-semibold py-3">
+                    <i class="bi bi-geo-alt me-2 text-primary"></i>Endereço de Entrega
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="Cep" class="form-label fw-semibold">CEP</label>
+                            <input asp-for="Cep" class="form-control" placeholder="00000-000" />
+                            <span asp-validation-for="Cep" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <label asp-for="Numero" class="form-label fw-semibold">Número</label>
+                            <input asp-for="Numero" class="form-control" />
+                            <span asp-validation-for="Numero" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Logradouro" class="form-label fw-semibold">Logradouro</label>
+                            <input asp-for="Logradouro" class="form-control" placeholder="Rua, Av..." />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Bairro" class="form-label fw-semibold">Bairro</label>
+                            <input asp-for="Bairro" class="form-control" />
+                        </div>
+                        <div class="col-md-5">
+                            <label asp-for="Cidade" class="form-label fw-semibold">Cidade</label>
+                            <input asp-for="Cidade" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Estado" class="form-label fw-semibold">Estado</label>
+                            <input asp-for="Estado" class="form-control" maxlength="2" placeholder="SP" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Complemento" class="form-label fw-semibold">Complemento <span class="text-muted fw-normal">(opcional)</span></label>
+                            <input asp-for="Complemento" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frete -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white fw-semibold py-3">
+                    <i class="bi bi-truck me-2 text-primary"></i>Frete
+                </div>
+                <div class="card-body">
+                    @if (Model.Transportadoras.Any())
+                    {
+                        @foreach (var t in Model.Transportadoras.Where(t => t.Ativo))
+                        {
+                            <div class="form-check border rounded p-3 mb-2">
+                                <input class="form-check-input" type="radio" name="TransportadoraId"
+                                       id="transp_@t.TransportadoraId" value="@t.TransportadoraId"
+                                       onclick="document.getElementById('ValorFrete').value='@t.ValorBase';document.getElementById('PrazoEntrega').value='@t.PrazoMaxDias'" />
+                                <label class="form-check-label d-flex justify-content-between w-100" for="transp_@t.TransportadoraId">
+                                    <span>
+                                        <strong>@t.Nome</strong>
+                                        <span class="text-muted small ms-2">@t.PrazoMinDias–@t.PrazoMaxDias dias úteis</span>
+                                    </span>
+                                    <span class="text-primary fw-bold">R$ @t.ValorBase.ToString("N2")</span>
+                                </label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Transportadoras indisponíveis no momento. Frete será calculado após a confirmação.
+                        </p>
+                    }
+                    <input type="hidden" asp-for="ValorFrete" id="ValorFrete" />
+                    <input type="hidden" asp-for="PrazoEntrega" id="PrazoEntrega" />
+                </div>
+            </div>
+
+            <!-- Pagamento -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-semibold py-3">
+                    <i class="bi bi-wallet2 me-2 text-primary"></i>Forma de Pagamento
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        @foreach (MetodoPagamento mp in Enum.GetValues(typeof(MetodoPagamento)))
+                        {
+                            var icon = mp switch
+                            {
+                                MetodoPagamento.Pix => "bi-qr-code",
+                                MetodoPagamento.Boleto => "bi-file-earmark-text",
+                                MetodoPagamento.CartaoCredito => "bi-credit-card",
+                                MetodoPagamento.CartaoDebito => "bi-credit-card-2-front",
+                                _ => "bi-cash"
+                            };
+                            <div class="col-6 col-md-3">
+                                <div class="form-check border rounded p-3 text-center">
+                                    <input class="form-check-input" type="radio" asp-for="MetodoPagamento"
+                                           id="mp_@mp" value="@((int)mp)"
+                                           @(mp == MetodoPagamento.Pix ? "checked" : "") />
+                                    <label class="form-check-label d-block" for="mp_@mp">
+                                        <i class="bi @icon fs-3 d-block mb-1 text-primary"></i>
+                                        @mp.ToString()
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div id="parcelasDiv" class="mt-2" style="display:none;">
+                        <label asp-for="NumeroParcelas" class="form-label fw-semibold">Parcelas</label>
+                        <select asp-for="NumeroParcelas" class="form-select" style="width:auto;">
+                            @for (int p = 1; p <= 12; p++)
+                            {
+                                <option value="@p">@p x sem juros</option>
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="MetodoPagamento" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumo do pedido -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 sticky-top" style="top:80px;">
+                <div class="card-header bg-dark text-white fw-semibold py-3">
+                    <i class="bi bi-receipt me-2"></i>Resumo do Pedido
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model.Carrinho.Itens)
+                    {
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-truncate me-2" style="max-width:160px;">@item.Nome x@item.Quantidade</span>
+                            <span class="fw-semibold">R$ @item.Subtotal.ToString("N2")</span>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Produtos</span>
+                        <span>R$ @Model.Carrinho.Total.ToString("N2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Frete</span>
+                        <span id="freteDisplay">A calcular</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total</span>
+                        <span class="text-primary" id="totalDisplay">R$ @Model.Carrinho.Total.ToString("N2")</span>
+                    </div>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Confirmar Pedido
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const totalProdutos = @Model.Carrinho.Total.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        document.querySelectorAll('input[name="TransportadoraId"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const frete = parseFloat(document.getElementById('ValorFrete').value) || 0;
+                document.getElementById('freteDisplay').textContent = 'R$ ' + frete.toFixed(2).replace('.', ',');
+                document.getElementById('totalDisplay').textContent = 'R$ ' + (totalProdutos + frete).toFixed(2).replace('.', ',');
+            });
+        });
+
+        document.querySelectorAll('input[name="MetodoPagamento"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('parcelasDiv').style.display =
+                    this.value == '3' ? 'block' : 'none';
+            });
+        });
+    </script>
+}
