@@ -1,6 +1,5 @@
 using Marketplace.Web.MVC.Models.Carrinho;
 using Marketplace.Web.MVC.Services.Carrinho;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.Web.MVC.Controllers;
@@ -9,7 +8,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
 {
     public async Task<IActionResult> Index()
     {
-        var carrinho = await carrinhoService.ObterCarrinhoAsync();
+        var carrinho = await CarrinhoSvc.ObterCarrinhoAsync();
         return View(carrinho);
     }
 
@@ -25,7 +24,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
             Quantidade = quantidade
         };
 
-        await carrinhoService.AdicionarItemAsync(item);
+        await CarrinhoSvc.AdicionarItemAsync(item);
         TempData["Sucesso"] = $"{nome} adicionado ao carrinho!";
         return RedirectToAction("Index");
     }
@@ -34,7 +33,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Remover(Guid produtoId)
     {
-        await carrinhoService.RemoverItemAsync(produtoId);
+        await CarrinhoSvc.RemoverItemAsync(produtoId);
         TempData["Sucesso"] = "Item removido do carrinho.";
         return RedirectToAction("Index");
     }
@@ -43,7 +42,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AtualizarQuantidade(Guid produtoId, int quantidade)
     {
-        await carrinhoService.AtualizarQuantidadeAsync(produtoId, quantidade);
+        await CarrinhoSvc.AtualizarQuantidadeAsync(produtoId, quantidade);
         return RedirectToAction("Index");
     }
 
@@ -51,7 +50,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Limpar()
     {
-        await carrinhoService.LimparAsync();
+        await CarrinhoSvc.LimparAsync();
         TempData["Sucesso"] = "Carrinho esvaziado.";
         return RedirectToAction("Index");
     }

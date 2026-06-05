@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using Marketplace.Web.MVC.Models.ApiContracts.Pagamentos;
-using Marketplace.Web.MVC.Models.ApiContracts.Pedidos;
 using Marketplace.Web.MVC.Models.ViewModels;
 using Marketplace.Web.MVC.Services.Carrinho;
 using Marketplace.Web.MVC.Services.Interfaces;
@@ -12,13 +11,12 @@ namespace Marketplace.Web.MVC.Controllers;
 [Authorize]
 public class CheckoutController(
     IPagamentosClient pagamentosClient,
-    IPedidosClient pedidosClient,
     CarrinhoService carrinhoService) : BaseController(carrinhoService)
 {
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var carrinho = await carrinhoService.ObterCarrinhoAsync();
+        var carrinho = await CarrinhoSvc.ObterCarrinhoAsync();
         if (!carrinho.Itens.Any())
         {
             TempData["Erro"] = "Seu carrinho está vazio.";
@@ -40,7 +38,7 @@ public class CheckoutController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Confirmar(CheckoutViewModel model)
     {
-        var carrinho = await carrinhoService.ObterCarrinhoAsync();
+        var carrinho = await CarrinhoSvc.ObterCarrinhoAsync();
         if (!carrinho.Itens.Any())
         {
             TempData["Erro"] = "Seu carrinho está vazio.";
@@ -93,7 +91,7 @@ public class CheckoutController(
         var transacao = await pagamentosClient.ProcessarTransacaoAsync(pagamento.PagamentoId, accessToken);
 
         // Limpar carrinho
-        await carrinhoService.LimparAsync();
+        await CarrinhoSvc.LimparAsync();
 
         var confirmacao = new ConfirmacaoViewModel
         {
