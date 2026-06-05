@@ -1,0 +1,83 @@
+@model Marketplace.Web.MVC.Models.ViewModels.CadastroViewModel
+@using Marketplace.Web.MVC.Models.ApiContracts.Usuarios
+@{
+    ViewData["Title"] = "Criar Conta";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4 text-center">
+                    <i class="bi bi-person-plus me-2"></i>Criar Conta
+                </h4>
+
+                <form asp-action="Cadastro" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Nome" class="form-label fw-semibold">Nome Completo</label>
+                        <input asp-for="Nome" class="form-control" placeholder="Seu nome completo" />
+                        <span asp-validation-for="Nome" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold">E-mail</label>
+                        <input asp-for="Email" class="form-control" placeholder="seu@email.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Senha" class="form-label fw-semibold">Senha</label>
+                        <input asp-for="Senha" class="form-control" placeholder="Mínimo 6 caracteres" />
+                        <span asp-validation-for="Senha" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tipo de Pessoa</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="TipoPessoa"
+                                       id="tipoPF" value="@((int)ETipoPessoa.PessoaFisica)" />
+                                <label class="form-check-label" for="tipoPF">Pessoa Física</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="TipoPessoa"
+                                       id="tipoPJ" value="@((int)ETipoPessoa.PessoaJuridica)" />
+                                <label class="form-check-label" for="tipoPJ">Pessoa Jurídica</label>
+                            </div>
+                        </div>
+                        <span asp-validation-for="TipoPessoa" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Documento" class="form-label fw-semibold">CPF / CNPJ</label>
+                        <input asp-for="Documento" class="form-control" placeholder="Somente números" />
+                        <span asp-validation-for="Documento" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Telefone" class="form-label fw-semibold">Telefone <span class="text-muted fw-normal">(opcional)</span></label>
+                        <input asp-for="Telefone" class="form-control" placeholder="(11) 99999-9999" />
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-check me-2"></i>Criar Conta
+                        </button>
+                    </div>
+                </form>
+
+                <hr />
+                <p class="text-center mb-0">
+                    Já tem conta?
+                    <a asp-action="Login" class="fw-semibold">Entrar aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
