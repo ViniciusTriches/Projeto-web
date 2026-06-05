@@ -1,0 +1,36 @@
+html {
+  font-size: 16px;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+  margin-top: auto;
+}
+
+.card-produto {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-produto:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+.estrela-preenchida { color: #ffc107; }
+.estrela-vazia { color: #dee2e6; }
+
+.badge-status-pendente { background-color: #ffc107; color: #000; }
+.badge-status-concluido { background-color: #198754; }
+.badge-status-cancelado { background-color: #dc3545; }
+
+.navbar-brand { letter-spacing: .03em; }
+
+.sidebar-categorias .list-group-item.active {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
