@@ -1,0 +1,47 @@
+@model Marketplace.Web.MVC.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Produtos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-grid me-2"></i>Produtos</h4>
+    <form asp-action="Index" method="get" class="d-flex gap-2">
+        <input name="busca" value="@Model.TermoBusca" class="form-control form-control-sm" placeholder="Buscar..." />
+        <button class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+
+@if (Model.Produtos.Any())
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+        @foreach (var produto in Model.Produtos.Where(p => !p.Excluido))
+        {
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm card-produto">
+                    <div class="card-body d-flex flex-column">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-box-seam text-muted" style="font-size:3rem;"></i>
+                        </div>
+                        <h6 class="card-title fw-semibold text-truncate">@produto.Nome</h6>
+                        <p class="text-muted small flex-grow-1">@produto.Descricao</p>
+                        <p class="fs-5 fw-bold text-primary mb-1">R$ @produto.Preco.ToString("N2")</p>
+                        <span class="badge @(produto.Disponivel ? "bg-success-subtle text-success" : "bg-danger-subtle text-danger") mb-2">
+                            @(produto.Disponivel ? "Disponível" : "Indisponível")
+                        </span>
+                        <a asp-action="Detalhe" asp-route-id="@produto.Id"
+                           class="btn btn-outline-primary btn-sm mt-auto">
+                            <i class="bi bi-eye me-1"></i>Ver Detalhes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size:4rem;"></i>
+        <p class="text-muted mt-3">Nenhum produto encontrado.</p>
+    </div>
+}

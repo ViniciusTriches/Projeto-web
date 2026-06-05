@@ -1,0 +1,138 @@
+@model Marketplace.Web.MVC.Models.ViewModels.ProdutoDetalheViewModel
+@{
+    ViewData["Title"] = Model.Produto.Nome;
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Início</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Produtos" asp-action="Index">Produtos</a></li>
+        <li class="breadcrumb-item active">@Model.Produto.Nome</li>
+    </ol>
+</nav>
+
+<div class="row mb-5">
+    <div class="col-md-4 text-center mb-4">
+        <div class="bg-white rounded shadow-sm p-4">
+            <i class="bi bi-box-seam text-muted" style="font-size:8rem;"></i>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h2 class="fw-bold">@Model.Produto.Nome</h2>
+        <p class="text-muted">Código: @Model.Produto.Codigo</p>
+
+        <!-- Média de notas -->
+        <div class="mb-3">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <i class="bi @(i <= Math.Round(Model.MediaNota) ? "bi-star-fill estrela-preenchida" : "bi-star estrela-vazia")"></i>
+            }
+            <span class="ms-2 text-muted small">
+                @(Model.Avaliacoes.Count > 0 ? $"{Model.MediaNota:F1} ({Model.Avaliacoes.Count} avaliações)" : "Sem avaliações")
+            </span>
+        </div>
+
+        <h3 class="text-primary fw-bold mb-3">R$ @Model.Produto.Preco.ToString("N2")</h3>
+
+        <p>@Model.Produto.Descricao</p>
+
+        <div class="mb-3">
+            @if (Model.Produto.Disponivel && Model.Produto.QuantidadeEstoque > 0)
+            {
+                <span class="badge bg-success fs-6 me-2">Em Estoque</span>
+                <span class="text-muted small">@Model.Produto.QuantidadeEstoque unidades disponíveis</span>
+            }
+            else
+            {
+                <span class="badge bg-danger fs-6">Indisponível</span>
+            }
+        </div>
+
+        @if (Model.Produto.Disponivel && Model.Produto.QuantidadeEstoque > 0)
+        {
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Carrinho" asp-action="Adicionar" method="post" class="d-flex gap-2">
+                    <input type="hidden" name="produtoId" value="@Model.Produto.Id" />
+                    <input type="hidden" name="nome" value="@Model.Produto.Nome" />
+                    <input type="hidden" name="preco" value="@Model.Produto.Preco" />
+                    <input type="number" name="quantidade" value="1" min="1" max="@Model.Produto.QuantidadeEstoque"
+                           class="form-control" style="width:80px;" />
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-cart-plus me-2"></i>Adicionar ao Carrinho
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Conta" asp-action="Login" asp-route-returnUrl="@Context.Request.Path"
+                   class="btn btn-success btn-lg">
+                    <i class="bi bi-cart-plus me-2"></i>Entrar para Comprar
+                </a>
+            }
+        }
+    </div>
+</div>
+
+<!-- Avaliações -->
+<div class="row">
+    <div class="col-12">
+        <h4 class="fw-bold mb-3"><i class="bi bi-chat-square-text me-2"></i>Avaliações</h4>
+
+        @if (Model.Avaliacoes.Any())
+        {
+            @foreach (var av in Model.Avaliacoes)
+            {
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= av.Nota ? "bi-star-fill estrela-preenchida" : "bi-star estrela-vazia") small"></i>
+                        }
+                        @if (!string.IsNullOrEmpty(av.Descricao))
+                        {
+                            <p class="mt-2 mb-0">@av.Descricao</p>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
+        }
+
+        <!-- Form avaliação -->
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-pencil me-2"></i>Deixe sua avaliação
+                </div>
+                <div class="card-body">
+                    <form asp-controller="Produtos" asp-action="Avaliar" method="post">
+                        <input type="hidden" asp-for="NovaAvaliacao.IdProduto" />
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nota</label>
+                            <select asp-for="NovaAvaliacao.Nota" class="form-select" style="width:auto;">
+                                <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                                <option value="4">⭐⭐⭐⭐ Bom</option>
+                                <option value="3">⭐⭐⭐ Regular</option>
+                                <option value="2">⭐⭐ Ruim</option>
+                                <option value="1">⭐ Péssimo</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="NovaAvaliacao.Descricao" class="form-label fw-semibold">Comentário (opcional)</label>
+                            <textarea asp-for="NovaAvaliacao.Descricao" class="form-control" rows="3"
+                                      placeholder="Conte sua experiência com o produto..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-2"></i>Enviar Avaliação
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
