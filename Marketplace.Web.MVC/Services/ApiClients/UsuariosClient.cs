@@ -22,18 +22,24 @@ public class UsuariosClient(HttpClient http, ILogger<UsuariosClient> logger) : I
         }
     }
 
-    public async Task<UsuarioDto?> CriarUsuarioAsync(CriarUsuarioRequest request)
+    public async Task<(UsuarioDto? Usuario, string? Erro)> CriarUsuarioAsync(CriarUsuarioRequest request)
     {
         try
         {
             var resp = await http.PostAsJsonAsync("/api/usuario", request);
-            if (!resp.IsSuccessStatusCode) return null;
-            return await resp.Content.ReadFromJsonAsync<UsuarioDto>();
+            if (!resp.IsSuccessStatusCode)
+            {
+                var erro = await resp.Content.ReadAsStringAsync();
+                logger.LogWarning("Erro ao criar usuario: {Erro}", erro);
+                return (null, erro);
+            }
+            var usuario = await resp.Content.ReadFromJsonAsync<UsuarioDto>();
+            return (usuario, null);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Erro ao criar usuario");
-            return null;
+            return (null, "Erro de conexão com o servidor.");
         }
     }
 
@@ -41,8 +47,9 @@ public class UsuariosClient(HttpClient http, ILogger<UsuariosClient> logger) : I
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.GetAsync($"/api/usuario/{id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/usuario/{id}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var resp = await http.SendAsync(request);
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<UsuarioDto>();
         }
@@ -57,8 +64,10 @@ public class UsuariosClient(HttpClient http, ILogger<UsuariosClient> logger) : I
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.PutAsJsonAsync($"/api/usuario/{id}", request);
+            var req = new HttpRequestMessage(HttpMethod.Put, $"/api/usuario/{id}");
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            req.Content = JsonContent.Create(request);
+            var resp = await http.SendAsync(req);
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<UsuarioDto>();
         }

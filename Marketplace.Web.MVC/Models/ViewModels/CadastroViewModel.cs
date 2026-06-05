@@ -13,7 +13,9 @@ public class CadastroViewModel
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Senha obrigatória")]
-    [MinLength(6, ErrorMessage = "Senha deve ter no mínimo 6 caracteres")]
+    [MinLength(8, ErrorMessage = "Senha deve ter no mínimo 8 caracteres")]
+    [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+        ErrorMessage = "Senha deve conter maiúscula, número e caractere especial (@$!%*?&)")]
     [DataType(DataType.Password)]
     public string Senha { get; set; } = string.Empty;
 

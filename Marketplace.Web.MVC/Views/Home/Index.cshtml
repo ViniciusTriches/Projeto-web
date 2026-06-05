@@ -3,11 +3,25 @@
     ViewData["Title"] = "Marketplace";
 }
 
+<div class="hero-section mb-4">
+    <h1><i class="bi bi-shop me-2" style="color: var(--color-accent)"></i>Marketplace</h1>
+    <p class="mb-3">Encontre os melhores produtos com os melhores preços</p>
+    <form asp-controller="Home" asp-action="Buscar" method="get"
+          class="d-flex justify-content-center gap-2" style="max-width:500px;margin:0 auto;">
+        <input class="form-control" type="search" name="q"
+               placeholder="O que você está procurando?"
+               value="@Model.TermoBusca" />
+        <button class="btn btn-primary px-4" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+    </form>
+</div>
+
 <div class="row">
     <!-- Sidebar categorias -->
     <div class="col-lg-2 mb-4">
-        <div class="card shadow-sm border-0 sidebar-categorias">
-            <div class="card-header bg-dark text-white fw-semibold">
+        <div class="card border-0 sidebar-categorias">
+            <div class="card-header fw-semibold">
                 <i class="bi bi-tags me-1"></i> Categorias
             </div>
             <div class="list-group list-group-flush">
@@ -24,7 +38,7 @@
                 }
                 @if (!Model.Categorias.Any())
                 {
-                    <div class="list-group-item text-muted small">Indisponível</div>
+                    <div class="list-group-item small" style="color:var(--color-text-muted)">Indisponível</div>
                 }
             </div>
         </div>
@@ -35,7 +49,7 @@
         @if (!string.IsNullOrEmpty(Model.TermoBusca))
         {
             <div class="mb-3">
-                <h5>Resultados para: <strong>@Model.TermoBusca</strong></h5>
+                <h5>Resultados para: <strong style="color:var(--color-accent)">@Model.TermoBusca</strong></h5>
                 @if (!Model.Produtos.Any())
                 {
                     <div class="alert alert-info">Nenhum produto encontrado para "@Model.TermoBusca".</div>
@@ -49,22 +63,22 @@
                 @foreach (var produto in Model.Produtos.Where(p => !p.Excluido && p.Disponivel))
                 {
                     <div class="col">
-                        <div class="card h-100 border-0 shadow-sm card-produto">
+                        <div class="card h-100 border-0 card-produto">
                             <div class="card-body d-flex flex-column">
-                                <div class="text-center mb-3">
-                                    <i class="bi bi-box-seam text-muted" style="font-size:3rem;"></i>
+                                <div class="text-center mb-3" style="color:var(--color-text-muted)">
+                                    <i class="bi bi-box-seam" style="font-size:3rem;"></i>
                                 </div>
                                 <h6 class="card-title fw-semibold text-truncate" title="@produto.Nome">@produto.Nome</h6>
-                                <p class="text-muted small flex-grow-1" style="overflow:hidden;max-height:3em;">@produto.Descricao</p>
+                                <p class="small flex-grow-1" style="color:var(--color-text-muted);overflow:hidden;max-height:3em;">@produto.Descricao</p>
                                 <div class="mt-auto">
                                     <p class="fs-5 fw-bold text-primary mb-2">R$ @produto.Preco.ToString("N2")</p>
                                     @if (produto.QuantidadeEstoque > 0)
                                     {
-                                        <span class="badge bg-success-subtle text-success mb-2">Em estoque</span>
+                                        <span class="badge bg-success-subtle mb-2">Em estoque</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger-subtle text-danger mb-2">Sem estoque</span>
+                                        <span class="badge bg-danger-subtle mb-2">Sem estoque</span>
                                     }
                                     <div class="d-grid">
                                         <a asp-controller="Produtos" asp-action="Detalhe" asp-route-id="@produto.Id"
@@ -81,9 +95,9 @@
         }
         else if (string.IsNullOrEmpty(Model.TermoBusca))
         {
-            <div class="text-center py-5">
-                <i class="bi bi-box-seam text-muted" style="font-size:4rem;"></i>
-                <p class="text-muted mt-3">Nenhum produto disponível no momento.</p>
+            <div class="text-center py-5" style="color:var(--color-text-muted)">
+                <i class="bi bi-box-seam" style="font-size:4rem;"></i>
+                <p class="mt-3">Nenhum produto disponível no momento.</p>
             </div>
         }
     </div>

@@ -84,10 +84,13 @@ public class ContaController(
             null,
             model.Telefone);
 
-        var usuario = await usuariosClient.CriarUsuarioAsync(request);
+        var (usuario, erroApi) = await usuariosClient.CriarUsuarioAsync(request);
         if (usuario == null)
         {
-            ModelState.AddModelError(string.Empty, "Erro ao criar conta. Verifique os dados e tente novamente.");
+            var mensagem = string.IsNullOrWhiteSpace(erroApi)
+                ? "Erro ao criar conta. Verifique os dados e tente novamente."
+                : $"Erro ao criar conta: {erroApi}";
+            ModelState.AddModelError(string.Empty, mensagem);
             return View(model);
         }
 

@@ -5,24 +5,26 @@
 
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h4 class="card-title mb-4 text-center">
-                    <i class="bi bi-person-circle me-2"></i>Entrar na Conta
-                </h4>
+        <div class="text-center mb-4">
+            <i class="bi bi-box-arrow-in-right" style="font-size:2.5rem;color:var(--color-accent)"></i>
+            <h3 class="mt-2 fw-bold">Entrar na sua conta</h3>
+            <p class="small" style="color:var(--color-text-muted)">Bem-vindo de volta ao Marketplace</p>
+        </div>
 
+        <div class="card shadow border-0" style="max-width:420px;margin:0 auto;">
+            <div class="card-body p-4">
                 <form asp-action="Login" method="post">
                     <input type="hidden" asp-for="ReturnUrl" />
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
 
                     <div class="mb-3">
-                        <label asp-for="Email" class="form-label fw-semibold"></label>
+                        <label asp-for="Email" class="form-label">E-mail</label>
                         <input asp-for="Email" class="form-control" placeholder="seu@email.com" autocomplete="email" />
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Senha" class="form-label fw-semibold">Senha</label>
+                    <div class="mb-4">
+                        <label asp-for="Senha" class="form-label">Senha</label>
                         <input asp-for="Senha" class="form-control" placeholder="••••••••" autocomplete="current-password" />
                         <span asp-validation-for="Senha" class="text-danger small"></span>
                     </div>
@@ -34,10 +36,10 @@
                     </div>
                 </form>
 
-                <hr />
-                <p class="text-center mb-0">
+                <hr style="border-color:var(--color-border)" />
+                <p class="text-center mb-0 small" style="color:var(--color-text-muted)">
                     Não tem conta?
-                    <a asp-action="Cadastro" class="fw-semibold">Cadastre-se aqui</a>
+                    <a asp-action="Cadastro" class="fw-semibold" style="color:var(--color-accent)">Cadastre-se aqui</a>
                 </p>
             </div>
         </div>
