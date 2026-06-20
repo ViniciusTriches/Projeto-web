@@ -35,7 +35,7 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
 
         await SignInWithResultado(resultado);
 
-        TempData["Sucesso"] = $"Bem-vindo(a), {resultado.Nome}!";
+        TempData["ToastSucesso"] = $"Bem-vindo(a), {resultado.Nome}!";
 
         if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             return Redirect(model.ReturnUrl);
@@ -82,7 +82,7 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
         if (loginResultado is not null)
             await SignInWithResultado(loginResultado);
 
-        TempData["Sucesso"] = "Conta criada com sucesso! Bem-vindo(a) ao Marketplace.";
+        TempData["ToastSucesso"] = "Conta criada com sucesso! Bem-vindo(a) ao Marketplace.";
         return RedirectToAction("Index", "Home");
     }
 
@@ -91,7 +91,7 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        TempData["Sucesso"] = "Você saiu com sucesso.";
+        TempData["ToastSucesso"] = "Você saiu com sucesso.";
         return RedirectToAction("Index", "Home");
     }
 
@@ -108,7 +108,7 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
         var usuario = await facade.ObterPerfilAsync(userId, accessToken);
         if (usuario is null)
         {
-            TempData["Erro"] = "Não foi possível carregar o perfil. Tente novamente.";
+            TempData["ToastErro"] = "Não foi possível carregar o perfil. Tente novamente.";
             return RedirectToAction("Index", "Home");
         }
 
@@ -139,11 +139,11 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
 
         if (atualizado is null)
         {
-            TempData["Erro"] = "Erro ao atualizar perfil. Tente novamente.";
+            TempData["ToastErro"] = "Erro ao atualizar perfil. Tente novamente.";
             return View(model);
         }
 
-        TempData["Sucesso"] = "Perfil atualizado com sucesso!";
+        TempData["ToastSucesso"] = "Perfil atualizado com sucesso!";
         return RedirectToAction("Perfil");
     }
 

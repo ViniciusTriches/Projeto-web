@@ -16,7 +16,7 @@ public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carri
         var carrinho = await CarrinhoSvc.ObterCarrinhoAsync();
         if (!carrinho.Itens.Any())
         {
-            TempData["Erro"] = "Seu carrinho está vazio.";
+            TempData["ToastErro"] = "Seu carrinho está vazio.";
             return RedirectToAction("Index", "Carrinho");
         }
 
@@ -34,7 +34,7 @@ public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carri
         var carrinho = await CarrinhoSvc.ObterCarrinhoAsync();
         if (!carrinho.Itens.Any())
         {
-            TempData["Erro"] = "Seu carrinho está vazio.";
+            TempData["ToastErro"] = "Seu carrinho está vazio.";
             return RedirectToAction("Index", "Carrinho");
         }
 
@@ -48,7 +48,7 @@ public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carri
         var accessToken = User.FindFirstValue("AccessToken") ?? string.Empty;
         if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var usuarioId))
         {
-            TempData["Erro"] = "Sessão expirada. Faça login novamente.";
+            TempData["ToastErro"] = "Sessão expirada. Faça login novamente.";
             return RedirectToAction("Login", "Conta");
         }
 
@@ -73,7 +73,7 @@ public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carri
 
         if (!resultado.Sucesso)
         {
-            TempData["Erro"] = resultado.MensagemErro ?? "Erro ao processar pedido.";
+            TempData["ToastErro"] = resultado.MensagemErro ?? "Erro ao processar pedido.";
             model.Carrinho = carrinho;
             model.Transportadoras = await facade.ObterTransportadorasAsync();
             return View("Index", model);

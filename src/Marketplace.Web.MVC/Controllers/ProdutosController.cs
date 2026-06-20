@@ -18,7 +18,7 @@ public class ProdutosController(IMarketplaceFacade facade, CarrinhoService carri
         var vm = await facade.ObterDetalheProdutoAsync(id);
         if (vm is null)
         {
-            TempData["Erro"] = "Produto não encontrado.";
+            TempData["ToastErro"] = "Produto não encontrado.";
             return RedirectToAction("Index");
         }
         return View(vm);
@@ -34,7 +34,7 @@ public class ProdutosController(IMarketplaceFacade facade, CarrinhoService carri
 
         if (string.IsNullOrEmpty(accessToken) || !Guid.TryParse(userId, out var clienteId))
         {
-            TempData["Erro"] = "Sessão expirada. Faça login novamente.";
+            TempData["ToastErro"] = "Sessão expirada. Faça login novamente.";
             return RedirectToAction("Detalhe", new { id = model.IdProduto });
         }
 
@@ -46,7 +46,7 @@ public class ProdutosController(IMarketplaceFacade facade, CarrinhoService carri
             Descricao = model.Descricao
         }, accessToken);
 
-        TempData[erro is null ? "Sucesso" : "Erro"] = erro ?? "Avaliação enviada com sucesso!";
+        TempData[erro is null ? "ToastSucesso" : "ToastErro"] = erro ?? "Avaliação enviada com sucesso!";
         return RedirectToAction("Detalhe", new { id = model.IdProduto });
     }
 }

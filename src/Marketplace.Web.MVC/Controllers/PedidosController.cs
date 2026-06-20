@@ -13,7 +13,7 @@ public class PedidosController(IMarketplaceFacade facade, CarrinhoService carrin
     {
         if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var usuarioId))
         {
-            TempData["Erro"] = "Sessão expirada. Faça login novamente.";
+            TempData["ToastErro"] = "Sessão expirada. Faça login novamente.";
             return RedirectToAction("Login", "Conta");
         }
 

@@ -25,7 +25,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
         };
 
         await CarrinhoSvc.AdicionarItemAsync(item);
-        TempData["Sucesso"] = $"{nome} adicionado ao carrinho!";
+        TempData["ToastSucesso"] = $"{nome} adicionado ao carrinho!";
         return RedirectToAction("Index");
     }
 
@@ -34,7 +34,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
     public async Task<IActionResult> Remover(Guid produtoId)
     {
         await CarrinhoSvc.RemoverItemAsync(produtoId);
-        TempData["Sucesso"] = "Item removido do carrinho.";
+        TempData["ToastSucesso"] = "Item removido do carrinho.";
         return RedirectToAction("Index");
     }
 
@@ -51,7 +51,7 @@ public class CarrinhoController(CarrinhoService carrinhoService) : BaseControlle
     public async Task<IActionResult> Limpar()
     {
         await CarrinhoSvc.LimparAsync();
-        TempData["Sucesso"] = "Carrinho esvaziado.";
+        TempData["ToastSucesso"] = "Carrinho esvaziado.";
         return RedirectToAction("Index");
     }
 }
