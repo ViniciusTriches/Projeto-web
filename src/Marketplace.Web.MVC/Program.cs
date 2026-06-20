@@ -1,6 +1,7 @@
 using Marketplace.Web.MVC.Services.ApiClients;
 using Marketplace.Web.MVC.Services.Auth;
 using Marketplace.Web.MVC.Services.Carrinho;
+using Marketplace.Web.MVC.Services.Facades;
 using Marketplace.Web.MVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -28,8 +29,15 @@ builder.Services.AddHttpClient<IPagamentosClient, PagamentosClient>(c =>
 builder.Services.AddHttpClient<IAvaliacoesClient, AvaliacoesClient>(c =>
     c.BaseAddress = new Uri(config["Microservicos:Avaliacoes"]!));
 
+builder.Services.AddHttpClient<IEstatisticasClient, EstatisticasClient>(c =>
+{
+    c.BaseAddress = new Uri(config["Microservicos:Estatisticas"]!);
+    c.Timeout = TimeSpan.FromSeconds(5);
+});
+
 builder.Services.AddSingleton<JwtDecoder>();
 builder.Services.AddScoped<CarrinhoService>();
+builder.Services.AddScoped<IMarketplaceFacade, MarketplaceFacade>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
