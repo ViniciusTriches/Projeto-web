@@ -349,8 +349,66 @@ footer {
 ::-webkit-scrollbar-thumb { background: var(--color-surface-2); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
 
+/* ── STEP WIZARD (Checkout) ── */
+.step-wizard { flex-wrap: wrap; gap: 0; }
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.step-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: var(--color-surface-2);
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  transition: all 0.2s;
+}
+
+.step-item.active .step-circle {
+  background-color: var(--color-accent-dim);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.step-text {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.step-item.active .step-text {
+  color: var(--color-accent);
+}
+
+.step-line {
+  width: 60px;
+  height: 2px;
+  background-color: var(--color-border);
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.step-line.active {
+  background-color: var(--color-accent);
+}
+
+/* ── STATUS BADGES PEDIDOS ── */
+.badge-status-pendente  { background-color: #b87d1a; }
+.badge-status-concluido { background-color: var(--color-success); }
+.badge-status-cancelado { background-color: var(--color-danger); }
+
 /* ── RESPONSIVO ── */
 @media (max-width: 768px) {
   .hero-section { padding: 2rem 1rem; }
   .hero-section h1 { font-size: 1.5rem; }
+  .step-line { width: 30px; }
 }
