@@ -1,20 +1,15 @@
-@model Marketplace.Web.MVC.Models.ApiContracts.Pedidos.CarrinhoRetornoDto?
+@using Marketplace.Web.MVC.Models.ApiContracts.Pedidos
+@model List<PedidoRetornoDto>
 @{
     ViewData["Title"] = "Meus Pedidos";
+    var pedidos = Model ?? [];
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold mb-0"><i class="bi bi-bag me-2"></i>Meus Pedidos</h4>
 </div>
 
-@if (Model == null)
-{
-    <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle me-2"></i>
-        Não foi possível carregar seus pedidos. Tente novamente mais tarde.
-    </div>
-}
-else if (!Model.PedidosModel.Any())
+@if (!pedidos.Any())
 {
     <div class="text-center py-5">
         <i class="bi bi-bag-x text-muted" style="font-size:5rem;"></i>
@@ -29,14 +24,14 @@ else
     <div class="row mb-3">
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center py-3">
-                <div class="h4 fw-bold text-primary mb-0">@Model.PedidosModel.Count</div>
+                <div class="h4 fw-bold text-primary mb-0">@pedidos.Count</div>
                 <small class="text-muted">Total de Pedidos</small>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center py-3">
                 <div class="h4 fw-bold text-success mb-0">
-                    R$ @Model.ValorTotalCarrinho.ToString("N2")
+                    R$ @pedidos.Sum(p => p.ValorTotal).ToString("N2")
                 </div>
                 <small class="text-muted">Valor Total</small>
             </div>
@@ -44,14 +39,14 @@ else
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center py-3">
                 <div class="h4 fw-bold text-warning mb-0">
-                    @Model.PedidosModel.Count(p => p.StatusPedido == 0)
+                    @pedidos.Count(p => p.StatusPedido == 0)
                 </div>
                 <small class="text-muted">Pendentes</small>
             </div>
         </div>
     </div>
 
-    @foreach (var pedido in Model.PedidosModel.OrderByDescending(p => p.DataPedido))
+    @foreach (var pedido in pedidos.OrderByDescending(p => p.DataPedido))
     {
         var statusClass = pedido.StatusPedido switch
         {

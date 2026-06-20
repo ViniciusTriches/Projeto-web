@@ -2,51 +2,26 @@ using System.Security.Claims;
 using Marketplace.Web.MVC.Models.ApiContracts.Avaliacoes;
 using Marketplace.Web.MVC.Models.ViewModels;
 using Marketplace.Web.MVC.Services.Carrinho;
-using Marketplace.Web.MVC.Services.Interfaces;
+using Marketplace.Web.MVC.Services.Facades;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.Web.MVC.Controllers;
 
-public class ProdutosController(
-    IProdutosClient produtosClient,
-    ICategoriasClient categoriasClient,
-    IAvaliacoesClient avaliacoesClient,
-    CarrinhoService carrinhoService) : BaseController(carrinhoService)
+public class ProdutosController(IMarketplaceFacade facade, CarrinhoService carrinhoService) : BaseController(carrinhoService)
 {
     public async Task<IActionResult> Index(string? busca)
-    {
-        var produtos = string.IsNullOrWhiteSpace(busca)
-            ? await produtosClient.ListarAsync()
-            : await produtosClient.BuscarAsync(busca);
-
-        var categorias = await categoriasClient.ListarAsync();
-
-        return View(new HomeViewModel
-        {
-            Produtos = produtos,
-            Categorias = categorias,
-            TermoBusca = busca
-        });
-    }
+        => View(await facade.ObterCatalogoAsync(busca, null));
 
     public async Task<IActionResult> Detalhe(Guid id)
     {
-        var produto = await produtosClient.ObterPorIdAsync(id);
-        if (produto == null)
+        var vm = await facade.ObterDetalheProdutoAsync(id);
+        if (vm is null)
         {
             TempData["Erro"] = "Produto não encontrado.";
             return RedirectToAction("Index");
         }
-
-        var avaliacoes = await avaliacoesClient.ListarPorProdutoAsync(id);
-
-        return View(new ProdutoDetalheViewModel
-        {
-            Produto = produto,
-            Avaliacoes = avaliacoes,
-            NovaAvaliacao = new NovaAvaliacaoViewModel { IdProduto = id }
-        });
+        return View(vm);
     }
 
     [Authorize]
@@ -63,20 +38,15 @@ public class ProdutosController(
             return RedirectToAction("Detalhe", new { id = model.IdProduto });
         }
 
-        var dto = new CriarAvaliacaoDto
+        var (_, erro) = await facade.AvaliarProdutoAsync(new CriarAvaliacaoDto
         {
             IdCliente = clienteId,
             IdProduto = model.IdProduto,
             Nota = model.Nota,
             Descricao = model.Descricao
-        };
+        }, accessToken);
 
-        var resultado = await avaliacoesClient.CriarAsync(dto, accessToken);
-        if (resultado == null)
-            TempData["Erro"] = "Não foi possível registrar sua avaliação.";
-        else
-            TempData["Sucesso"] = "Avaliação enviada com sucesso!";
-
+        TempData[erro is null ? "Sucesso" : "Erro"] = erro ?? "Avaliação enviada com sucesso!";
         return RedirectToAction("Detalhe", new { id = model.IdProduto });
     }
 }
