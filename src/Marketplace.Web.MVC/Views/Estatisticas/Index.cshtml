@@ -1,0 +1,30 @@
+@model Marketplace.Web.MVC.Models.ViewModels.PainelEstatisticasViewModel
+@{
+    ViewData["Title"] = "Estatísticas";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold mb-0"><i class="bi bi-graph-up me-2"></i>Painel de Estatísticas</h4>
+    <span class="badge @(Model.Disponivel ? "bg-success" : "bg-secondary") fs-6 px-3 py-2">
+        @(Model.Disponivel ? "Online" : "Indisponível")
+    </span>
+</div>
+
+@if (!Model.Disponivel)
+{
+    <div class="card border-0 shadow-sm text-center py-5 px-4">
+        <i class="bi bi-bar-chart-line text-muted" style="font-size:5rem;"></i>
+        <h5 class="mt-4">Estatísticas em Breve</h5>
+        <p class="text-muted">@Model.MensagemErro</p>
+        <p class="text-muted small">O serviço de estatísticas ainda está sendo finalizado pela equipe. Em breve os dados do marketplace estarão disponíveis aqui.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-2" style="max-width:200px;margin:0 auto;">
+            <i class="bi bi-house me-2"></i>Voltar ao Início
+        </a>
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm p-4">
+        <pre class="text-light mb-0">@System.Text.Json.JsonSerializer.Serialize(Model.DadosPainel, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })</pre>
+    </div>
+}
