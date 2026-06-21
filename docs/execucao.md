@@ -2,8 +2,10 @@
 
 ## Requisitos
 
-- .NET 9 SDK ou superior
+- .NET 10 SDK
 - Acesso à internet (para consumir as APIs em neurosky.com.br)
+
+> O projeto usa .NET 10 para manter compatibilidade com o Hosting Bundle já instalado no servidor IIS dos demais microserviços do projeto.
 
 ## Execução Local
 

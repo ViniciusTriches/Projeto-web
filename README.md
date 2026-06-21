@@ -6,9 +6,9 @@ Interface web de um marketplace com arquitetura de microserviços, desenvolvida 
 
 | Tecnologia | Uso |
 |---|---|
-| ASP.NET Core 9 MVC | Framework principal |
+| ASP.NET Core 10 MVC | Framework principal |
 | Bootstrap 5 + Bootstrap Icons | UI responsiva |
-| C# / .NET 9 | Linguagem e runtime |
+| C# / .NET 10 | Linguagem e runtime |
 | HttpClient tipado | Comunicação com as APIs REST |
 | Cookie Authentication | Sessão do usuário |
 | JWT (decode sem validar assinatura) | Leitura de claims do token |

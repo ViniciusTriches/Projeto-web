@@ -12,8 +12,8 @@ obj/
 packages/
 
 ## Publish
-/publish/
-/out/
+publish/
+out/
 
 ## Local config
 appsettings.Development.json
