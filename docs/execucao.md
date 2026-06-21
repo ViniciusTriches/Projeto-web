@@ -8,12 +8,8 @@
 ## Execução Local
 
 ```bash
-# Clonar o repositório
 git clone https://github.com/ViniciusTriches/Projeto-web.git
-cd Projeto-web
-
-# Restaurar dependências e executar
-cd src/Marketplace.Web.MVC
+cd Projeto-web/src/Marketplace.Web.MVC
 dotnet restore
 dotnet run
 ```
@@ -43,10 +39,7 @@ As URLs dos microserviços estão em `src/Marketplace.Web.MVC/appsettings.json`:
 O projeto contém um `Dockerfile` multi-stage em `src/Marketplace.Web.MVC/Dockerfile`.
 
 ```bash
-# Build da imagem
 docker build -t marketplace-web -f src/Marketplace.Web.MVC/Dockerfile .
-
-# Executar o container
 docker run -p 8080:8080 marketplace-web
 ```
 

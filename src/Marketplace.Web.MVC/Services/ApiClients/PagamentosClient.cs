@@ -15,7 +15,7 @@ public class PagamentosClient(HttpClient http, ILogger<PagamentosClient> logger)
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao listar transportadoras");
+            logger.LogWarning(ex, "Não foi possível carregar transportadoras");
             return new();
         }
     }

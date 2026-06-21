@@ -1,32 +1,24 @@
 # Marketplace.Web.MVC
 
-Interface web integrada de um marketplace construído com arquitetura de microserviços, desenvolvido para a disciplina de **Projetos de Sistemas Web** (Uniftec).
+Interface web de um marketplace com arquitetura de microserviços, desenvolvida para a disciplina de **Projetos de Sistemas Web** (Uniftec).
 
 ## Tecnologias
 
 | Tecnologia | Uso |
 |---|---|
-| ASP.NET Core 9 MVC | Framework principal da interface web |
-| Bootstrap 5 | Estilização e componentes responsivos |
-| Bootstrap Icons | Iconografia |
+| ASP.NET Core 9 MVC | Framework principal |
+| Bootstrap 5 + Bootstrap Icons | UI responsiva |
 | C# / .NET 9 | Linguagem e runtime |
-| HttpClient tipado | Comunicação com as APIs REST dos microserviços |
-| Cookie Authentication | Autenticação do usuário na interface |
-| JWT (decode sem validar assinatura) | Leitura dos claims do token emitido pelo microserviço de Auth |
-| IDistributedCache (Memory) | Carrinho de compras em sessão |
-| Docker | Containerização para deploy em cloud |
-| Render | Plataforma de cloud utilizada para o deploy |
+| HttpClient tipado | Comunicação com as APIs REST |
+| Cookie Authentication | Sessão do usuário |
+| JWT (decode sem validar assinatura) | Leitura de claims do token |
+| IDistributedCache (MemoryCache) | Carrinho de compras em sessão |
+| Docker | Containerização |
+| Render | Deploy em cloud |
 
-## Padrões de Projeto Aplicados
+## Arquitetura
 
-### MVC (Model-View-Controller)
-A interface segue rigorosamente o padrão MVC do ASP.NET Core. Os **Controllers** recebem as requisições HTTP, orquestram a lógica de apresentação (via Façade) e escolhem qual **View** renderizar. Os **Models** transportam dados entre as camadas. As **Views** (Razor `.cshtml`) são responsáveis exclusivamente pela apresentação — nenhuma lógica de negócio reside nelas.
-
-### Façade
-A camada `Services/Facades/MarketplaceFacade` unifica o acesso a todos os microserviços. Os Controllers **nunca** injetam os clients HTTP individuais (`IProdutosClient`, `ICategoriasClient`, etc.) — eles dependem apenas de `IMarketplaceFacade`. A Façade é responsável por:
-- Orquestrar chamadas paralelas a múltiplos serviços (ex: produto + avaliações em paralelo)
-- Encapsular a sequência de operações do checkout (criar pedido → frete → pagamento → transação)
-- Abstrair os detalhes de cada microserviço dos Controllers
+Os controllers dependem apenas de `IMarketplaceFacade`, que centraliza toda a integração com os microserviços. Isso mantém os controllers limpos e permite que a Façade faça chamadas paralelas quando necessário.
 
 ## Microserviços Consumidos
 
@@ -42,20 +34,19 @@ A camada `Services/Facades/MarketplaceFacade` unifica o acesso a todos os micros
 
 ## Como Executar
 
-Consulte [docs/execucao.md](docs/execucao.md) para instruções detalhadas de execução local e deploy.
-
-**Resumo rápido:**
 ```bash
 cd src/Marketplace.Web.MVC
 dotnet restore
 dotnet run
 ```
 
+Para instruções detalhadas (Docker, Render, variáveis de ambiente): [docs/execucao.md](docs/execucao.md)
+
 ## Documentação
 
 - [Arquitetura e padrões](docs/arquitetura.md)
 - [Endpoints consumidos](docs/endpoints-consumidos.md)
-- [Execução local e deploy](docs/execucao.md)
+- [Execução e deploy](docs/execucao.md)
 
 ## Integrantes
 

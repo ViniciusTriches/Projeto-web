@@ -73,7 +73,7 @@ public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carri
 
         if (!resultado.Sucesso)
         {
-            TempData["ToastErro"] = resultado.MensagemErro ?? "Erro ao processar pedido.";
+            TempData["ToastErro"] = resultado.MensagemErro ?? "Não foi possível finalizar o pedido. Verifique os dados e tente novamente.";
             model.Carrinho = carrinho;
             model.Transportadoras = await facade.ObterTransportadorasAsync();
             return View("Index", model);

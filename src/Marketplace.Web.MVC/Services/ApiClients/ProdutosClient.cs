@@ -57,7 +57,7 @@ public class ProdutosClient(HttpClient http, ILogger<ProdutosClient> logger) : I
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Erro ao obter produto por codigo {Codigo}", codigo);
+            logger.LogDebug(ex, "Produto não encontrado pelo código {Codigo}", codigo);
             return null;
         }
     }

@@ -36,15 +36,9 @@
 
 ## Padrão Façade
 
-O padrão Façade é implementado em `src/Marketplace.Web.MVC/Services/Facades/`.
+Implementado em `src/Marketplace.Web.MVC/Services/Facades/`. Os controllers injetam apenas `IMarketplaceFacade` — nunca os clients HTTP diretamente. A Façade concentra a lógica de orquestração: chamadas paralelas, sequências de checkout, fallback de estatísticas.
 
-**Por que Façade aqui?**
-- Centraliza toda a integração com os 7 microserviços em um único ponto
-- Controllers dependem apenas de `IMarketplaceFacade` — não de nenhum client HTTP individual
-- Permite chamadas paralelas (`Task.WhenAll`) transparentes para os controllers
-- Facilita substituição e mock de qualquer microserviço sem alterar controllers
-
-**Exemplo de orquestração paralela (produto + avaliações):**
+**Exemplo de chamada paralela (produto + avaliações):**
 ```csharp
 var (produto, avaliacoes) = await (
     produtos.ObterPorIdAsync(produtoId),
