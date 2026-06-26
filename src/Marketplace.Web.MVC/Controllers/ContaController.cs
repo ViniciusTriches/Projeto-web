@@ -210,28 +210,29 @@ public class ContaController(
 
     private async Task SignInWithResultado(Models.ViewModels.LoginResultado resultado)
     {
-        // Garante ClaimTypes.Name a partir do campo Nome da resposta da API (não do JWT),
-        // pois o JWT pode usar claim "unique_name" ou outro alias que o JwtDecoder não normalize.
-        var claims = new List<Claim>(resultado.Principal.Claims)
-        {
-            new(ClaimTypes.Name, resultado.Nome),
-            new("AccessToken", resultado.AccessToken),
-            new("RefreshToken", resultado.RefreshToken)
-        };
-
-        var claimsUnicos = claims
-            .GroupBy(c => c.Type)
-            .Select(g => g.First())
+        // Remove qualquer ClaimTypes.Name que venha do JWT (pode usar alias diferente),
+        // depois adiciona resultado.Nome como fonte autoritativa.
+        var claims = resultado.Principal.Claims
+            .Where(c => c.Type != ClaimTypes.Name && c.Type != "AccessToken" && c.Type != "RefreshToken")
             .ToList();
 
+        claims.Add(new Claim(ClaimTypes.Name, resultado.Nome));
+        claims.Add(new Claim("AccessToken", resultado.AccessToken));
+        claims.Add(new Claim("RefreshToken", resultado.RefreshToken));
+
         var identity = new ClaimsIdentity(
-            claimsUnicos,
-            CookieAuthenticationDefaults.AuthenticationScheme,
+            claims,
+            authenticationType: CookieAuthenticationDefaults.AuthenticationScheme,
             nameType: ClaimTypes.Name,
             roleType: ClaimTypes.Role);
 
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity),
-            new AuthenticationProperties { IsPersistent = true, ExpiresUtc = resultado.ExpiresIn });
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = resultado.ExpiresIn
+            });
     }
 }
