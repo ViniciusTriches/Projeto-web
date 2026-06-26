@@ -80,9 +80,17 @@ public class UsuariosClient(HttpClient http, ILogger<UsuariosClient> logger) : I
 
     public async Task EsqueciSenhaAsync(string email)
     {
+        var payload = new EsqueciSenhaRequest(email);
+        var payloadJson = System.Text.Json.JsonSerializer.Serialize(payload);
+        logger.LogInformation("EsqueciSenha: email='{Email}' payload={Payload}", email, payloadJson);
         try
         {
-            await http.PostAsJsonAsync("/api/autenticacao/esqueci-senha", new EsqueciSenhaRequest(email));
+            var resp = await http.PostAsJsonAsync("/api/autenticacao/esqueci-senha", payload);
+            if (!resp.IsSuccessStatusCode)
+            {
+                var corpo = await resp.Content.ReadAsStringAsync();
+                logger.LogWarning("EsqueciSenha: API retornou {Status} - {Corpo}", (int)resp.StatusCode, corpo);
+            }
         }
         catch (Exception ex)
         {
