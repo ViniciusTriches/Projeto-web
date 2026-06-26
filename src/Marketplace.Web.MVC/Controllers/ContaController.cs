@@ -127,7 +127,7 @@ public class ContaController(
     {
         if (!ModelState.IsValid) return View(model);
 
-        var (sucesso, erro) = await facade.RedefinirSenhaAsync(model.Token, model.NovaSenha);
+        var (sucesso, erro) = await facade.RedefinirSenhaAsync(model.Email, model.Token, model.NovaSenha);
         if (!sucesso)
         {
             ModelState.AddModelError(string.Empty, erro ?? "Não foi possível redefinir a senha. O link pode ter expirado.");

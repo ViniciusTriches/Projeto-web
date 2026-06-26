@@ -25,6 +25,12 @@
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
 
                     <div class="mb-3">
+                        <label asp-for="Email" class="form-label">E-mail</label>
+                        <input asp-for="Email" class="form-control" placeholder="seu@email.com" autocomplete="email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
                         <label asp-for="Token" class="form-label">Token de redefinição</label>
                         <input asp-for="Token" class="form-control" placeholder="Cole aqui o token recebido por e-mail" />
                         <span asp-validation-for="Token" class="text-danger small"></span>

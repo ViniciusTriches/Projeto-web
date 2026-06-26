@@ -4,6 +4,10 @@ namespace Marketplace.Web.MVC.Models.ViewModels;
 
 public class RedefinirSenhaViewModel
 {
+    [Required(ErrorMessage = "Informe seu e-mail")]
+    [EmailAddress(ErrorMessage = "E-mail inválido")]
+    public string Email { get; set; } = string.Empty;
+
     [Required(ErrorMessage = "Informe o token recebido por e-mail")]
     public string Token { get; set; } = string.Empty;
 

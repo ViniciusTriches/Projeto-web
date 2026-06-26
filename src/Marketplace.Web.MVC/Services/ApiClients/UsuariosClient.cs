@@ -98,11 +98,11 @@ public class UsuariosClient(HttpClient http, ILogger<UsuariosClient> logger) : I
         }
     }
 
-    public async Task<(bool Sucesso, string? Erro)> ResetarSenhaAsync(string token, string novaSenha)
+    public async Task<(bool Sucesso, string? Erro)> ResetarSenhaAsync(string email, string token, string novaSenha)
     {
         try
         {
-            var resp = await http.PostAsJsonAsync("/api/autenticacao/resetar-senha", new ResetarSenhaRequest(token, novaSenha));
+            var resp = await http.PostAsJsonAsync("/api/autenticacao/resetar-senha", new ResetarSenhaRequest(email, token, novaSenha));
             if (!resp.IsSuccessStatusCode)
             {
                 var erro = await resp.Content.ReadAsStringAsync();

@@ -36,7 +36,7 @@ public class MarketplaceFacade(
             vm.Categorias = listaCategorias ?? [];
 
             if (categoriaId.HasValue)
-                vm.Produtos = vm.Produtos.Where(p => false).ToList(); // filtro local — IdCategoria é Guid, não cruza com int
+                vm.Produtos = vm.Produtos.Where(p => p.IdCategoria == categoriaId.Value).ToList(); // cross-team: valores de IdCategoria podem não corresponder às categorias reais
 
         }
         catch (Exception ex)
@@ -109,8 +109,8 @@ public class MarketplaceFacade(
     public async Task SolicitarResetSenhaAsync(string email)
         => await usuarios.EsqueciSenhaAsync(email);
 
-    public async Task<(bool Sucesso, string? Erro)> RedefinirSenhaAsync(string token, string novaSenha)
-        => await usuarios.ResetarSenhaAsync(token, novaSenha);
+    public async Task<(bool Sucesso, string? Erro)> RedefinirSenhaAsync(string email, string token, string novaSenha)
+        => await usuarios.ResetarSenhaAsync(email, token, novaSenha);
 
     public async Task<(ProdutoAvaliacaoDto? Avaliacao, string? Erro)> AvaliarProdutoAsync(CriarAvaliacaoDto dto, string accessToken)
     {

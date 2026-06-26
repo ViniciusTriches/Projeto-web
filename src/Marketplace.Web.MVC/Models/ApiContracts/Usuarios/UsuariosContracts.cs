@@ -39,7 +39,7 @@ public record RefreshTokenRequest(string AccessToken, string RefreshToken);
 
 public record EsqueciSenhaRequest(string Email);
 
-public record ResetarSenhaRequest(string Token, string NovaSenha);
+public record ResetarSenhaRequest(string Email, string Token, string NovaSenha);
 
 public record LoginResponse(
     string AccessToken,

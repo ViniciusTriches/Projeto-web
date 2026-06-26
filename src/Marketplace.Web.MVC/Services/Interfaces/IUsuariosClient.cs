@@ -9,5 +9,5 @@ public interface IUsuariosClient
     Task<UsuarioDto?> ObterUsuarioAsync(Guid id, string accessToken);
     Task<UsuarioDto?> AtualizarUsuarioAsync(Guid id, AtualizarUsuarioRequest request, string accessToken);
     Task EsqueciSenhaAsync(string email);
-    Task<(bool Sucesso, string? Erro)> ResetarSenhaAsync(string token, string novaSenha);
+    Task<(bool Sucesso, string? Erro)> ResetarSenhaAsync(string email, string token, string novaSenha);
 }
