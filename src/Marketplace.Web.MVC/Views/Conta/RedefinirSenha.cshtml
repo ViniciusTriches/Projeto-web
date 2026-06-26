@@ -13,9 +13,22 @@
 
         <div class="card shadow border-0" style="max-width:420px;margin:0 auto;">
             <div class="card-body p-4">
+                <div class="alert alert-info d-flex align-items-start gap-2 mb-4">
+                    <i class="bi bi-envelope-check mt-1"></i>
+                    <div>
+                        Verifique seu e-mail e copie o token de redefinição recebido. Cole-o no campo abaixo
+                        junto com sua nova senha.
+                    </div>
+                </div>
+
                 <form asp-action="RedefinirSenha" method="post">
-                    <input type="hidden" asp-for="Token" />
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Token" class="form-label">Token de redefinição</label>
+                        <input asp-for="Token" class="form-control" placeholder="Cole aqui o token recebido por e-mail" />
+                        <span asp-validation-for="Token" class="text-danger small"></span>
+                    </div>
 
                     <div class="mb-3">
                         <label asp-for="NovaSenha" class="form-label">Nova senha</label>

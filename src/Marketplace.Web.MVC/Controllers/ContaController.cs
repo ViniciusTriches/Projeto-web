@@ -111,19 +111,14 @@ public class ContaController(
 
         await facade.SolicitarResetSenhaAsync(model.Email);
 
-        TempData["ToastSucesso"] = "Se o e-mail existir em nossa base, você receberá instruções para redefinir sua senha.";
-        return RedirectToAction("Login");
+        TempData["ToastSucesso"] = "Enviamos um e-mail com o token de redefinição. Verifique sua caixa de entrada (e spam).";
+        return RedirectToAction("RedefinirSenha");
     }
 
     [HttpGet]
-    public IActionResult RedefinirSenha(string token)
+    public IActionResult RedefinirSenha(string? token = null)
     {
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            TempData["ToastErro"] = "Link de redefinição inválido ou expirado.";
-            return RedirectToAction("Login");
-        }
-        return View(new RedefinirSenhaViewModel { Token = token });
+        return View(new RedefinirSenhaViewModel { Token = token ?? string.Empty });
     }
 
     [HttpPost]

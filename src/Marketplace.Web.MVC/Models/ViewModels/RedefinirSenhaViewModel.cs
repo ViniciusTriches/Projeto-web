@@ -4,7 +4,7 @@ namespace Marketplace.Web.MVC.Models.ViewModels;
 
 public class RedefinirSenhaViewModel
 {
-    [Required]
+    [Required(ErrorMessage = "Informe o token recebido por e-mail")]
     public string Token { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Senha obrigatória")]
