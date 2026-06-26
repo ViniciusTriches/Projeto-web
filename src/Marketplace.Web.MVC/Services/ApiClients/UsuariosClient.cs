@@ -77,4 +77,35 @@ public class UsuariosClient(HttpClient http, ILogger<UsuariosClient> logger) : I
             return null;
         }
     }
+
+    public async Task EsqueciSenhaAsync(string email)
+    {
+        try
+        {
+            await http.PostAsJsonAsync("/api/autenticacao/esqueci-senha", new EsqueciSenhaRequest(email));
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Erro ao solicitar reset de senha para {Email}", email);
+        }
+    }
+
+    public async Task<(bool Sucesso, string? Erro)> ResetarSenhaAsync(string token, string novaSenha)
+    {
+        try
+        {
+            var resp = await http.PostAsJsonAsync("/api/autenticacao/resetar-senha", new ResetarSenhaRequest(token, novaSenha));
+            if (!resp.IsSuccessStatusCode)
+            {
+                var erro = await resp.Content.ReadAsStringAsync();
+                return (false, string.IsNullOrWhiteSpace(erro) ? "Link inválido ou expirado." : erro);
+            }
+            return (true, null);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Erro ao resetar senha");
+            return (false, "Erro de conexão ao tentar redefinir a senha.");
+        }
+    }
 }

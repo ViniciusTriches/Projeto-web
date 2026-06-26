@@ -104,6 +104,12 @@ public class MarketplaceFacade(
     public async Task<UsuarioDto?> AtualizarPerfilAsync(Guid usuarioId, AtualizarUsuarioRequest request, string accessToken)
         => await usuarios.AtualizarUsuarioAsync(usuarioId, request, accessToken);
 
+    public async Task SolicitarResetSenhaAsync(string email)
+        => await usuarios.EsqueciSenhaAsync(email);
+
+    public async Task<(bool Sucesso, string? Erro)> RedefinirSenhaAsync(string token, string novaSenha)
+        => await usuarios.ResetarSenhaAsync(token, novaSenha);
+
     public async Task<(ProdutoAvaliacaoDto? Avaliacao, string? Erro)> AvaliarProdutoAsync(CriarAvaliacaoDto dto, string accessToken)
     {
         try

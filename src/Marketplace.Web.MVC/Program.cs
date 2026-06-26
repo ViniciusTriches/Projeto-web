@@ -3,6 +3,7 @@ using Marketplace.Web.MVC.Services.Auth;
 using Marketplace.Web.MVC.Services.Carrinho;
 using Marketplace.Web.MVC.Services.Facades;
 using Marketplace.Web.MVC.Services.Interfaces;
+using Marketplace.Web.MVC.Services.Perfil;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,7 @@ builder.Services.AddHttpClient<IEstatisticasClient, EstatisticasClient>(c =>
 
 builder.Services.AddSingleton<JwtDecoder>();
 builder.Services.AddScoped<CarrinhoService>();
+builder.Services.AddScoped<IEnderecoService, EnderecoSessionService>();
 builder.Services.AddScoped<IMarketplaceFacade, MarketplaceFacade>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

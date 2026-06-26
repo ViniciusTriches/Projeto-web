@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using Marketplace.Web.MVC.Models.ApiContracts.Usuarios;
+using Marketplace.Web.MVC.Models.Perfil;
 using Marketplace.Web.MVC.Models.ViewModels;
 using Marketplace.Web.MVC.Services.Carrinho;
 using Marketplace.Web.MVC.Services.Facades;
+using Marketplace.Web.MVC.Services.Perfil;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +12,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.Web.MVC.Controllers;
 
-public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinhoService) : BaseController(carrinhoService)
+public class ContaController(
+    IMarketplaceFacade facade,
+    CarrinhoService carrinhoService,
+    IEnderecoService enderecoService) : BaseController(carrinhoService)
 {
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
@@ -95,14 +100,55 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpGet]
+    public IActionResult EsqueciSenha() => View();
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EsqueciSenha(EsqueciSenhaViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        await facade.SolicitarResetSenhaAsync(model.Email);
+
+        TempData["ToastSucesso"] = "Se o e-mail existir em nossa base, você receberá instruções para redefinir sua senha.";
+        return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public IActionResult RedefinirSenha(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            TempData["ToastErro"] = "Link de redefinição inválido ou expirado.";
+            return RedirectToAction("Login");
+        }
+        return View(new RedefinirSenhaViewModel { Token = token });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RedefinirSenha(RedefinirSenhaViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var (sucesso, erro) = await facade.RedefinirSenhaAsync(model.Token, model.NovaSenha);
+        if (!sucesso)
+        {
+            ModelState.AddModelError(string.Empty, erro ?? "Não foi possível redefinir a senha. O link pode ter expirado.");
+            return View(model);
+        }
+
+        TempData["ToastSucesso"] = "Senha redefinida com sucesso! Faça login com sua nova senha.";
+        return RedirectToAction("Login");
+    }
+
     [Authorize]
     [HttpGet]
     public async Task<IActionResult> Perfil()
     {
-        var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var accessToken = User.FindFirstValue("AccessToken");
-
-        if (!Guid.TryParse(idStr, out var userId) || string.IsNullOrEmpty(accessToken))
+        var (userId, accessToken) = ObterCredenciais();
+        if (userId == Guid.Empty)
             return RedirectToAction("Login");
 
         var usuario = await facade.ObterPerfilAsync(userId, accessToken);
@@ -114,37 +160,57 @@ public class ContaController(IMarketplaceFacade facade, CarrinhoService carrinho
 
         return View(new PerfilViewModel
         {
-            Id = usuario.Id,
-            Nome = usuario.Nome,
-            Email = usuario.Email,
-            NomeFantasia = usuario.NomeFantasia,
-            Documento = usuario.Documento,
-            Telefone = usuario.Telefone,
-            TipoPessoa = usuario.TipoPessoa,
-            Funcao = usuario.Funcao,
-            Status = usuario.Status,
-            CriadoEm = usuario.CriadoEm
+            Usuario = usuario,
+            Endereco = enderecoService.Obter(userId) ?? new EnderecoUsuario()
         });
     }
 
     [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Perfil(PerfilViewModel model)
+    public async Task<IActionResult> AtualizarDadosPessoais(PerfilViewModel model)
     {
-        if (!ModelState.IsValid) return View(model);
+        var (userId, accessToken) = ObterCredenciais();
 
-        var accessToken = User.FindFirstValue("AccessToken") ?? string.Empty;
-        var atualizado = await facade.AtualizarPerfilAsync(model.Id, new AtualizarUsuarioRequest(model.Id, model.Nome, model.Email), accessToken);
+        if (model.Usuario is null)
+        {
+            TempData["ToastErro"] = "Dados inválidos.";
+            return RedirectToAction("Perfil");
+        }
+
+        var atualizado = await facade.AtualizarPerfilAsync(
+            userId,
+            new AtualizarUsuarioRequest(userId, model.Usuario.Nome, model.Usuario.Email),
+            accessToken);
 
         if (atualizado is null)
         {
-            TempData["ToastErro"] = "Erro ao atualizar perfil. Tente novamente.";
-            return View(model);
+            TempData["ToastErro"] = "Não foi possível atualizar seus dados.";
+            return RedirectToAction("Perfil");
         }
 
-        TempData["ToastSucesso"] = "Perfil atualizado com sucesso!";
+        TempData["ToastSucesso"] = "Dados atualizados com sucesso!";
         return RedirectToAction("Perfil");
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult AtualizarEndereco(PerfilViewModel model)
+    {
+        var (userId, _) = ObterCredenciais();
+        enderecoService.Salvar(userId, model.Endereco);
+
+        TempData["ToastSucesso"] = "Endereço salvo com sucesso!";
+        return RedirectToAction("Perfil");
+    }
+
+    private (Guid UserId, string AccessToken) ObterCredenciais()
+    {
+        var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var token = User.FindFirstValue("AccessToken") ?? string.Empty;
+        Guid.TryParse(idStr, out var userId);
+        return (userId, token);
     }
 
     private async Task SignInWithResultado(Models.ViewModels.LoginResultado resultado)

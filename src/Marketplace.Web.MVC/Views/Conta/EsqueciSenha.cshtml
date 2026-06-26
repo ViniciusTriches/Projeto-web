@@ -1,0 +1,44 @@
+@model Marketplace.Web.MVC.Models.ViewModels.EsqueciSenhaViewModel
+@{
+    ViewData["Title"] = "Esqueci minha senha";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="text-center mb-4">
+            <i class="bi bi-shield-lock" style="font-size:2.5rem;color:var(--color-accent)"></i>
+            <h3 class="mt-2 fw-bold">Recuperar senha</h3>
+            <p class="small" style="color:var(--color-text-muted)">Informe seu e-mail e enviaremos instruções para redefinir sua senha</p>
+        </div>
+
+        <div class="card shadow border-0" style="max-width:420px;margin:0 auto;">
+            <div class="card-body p-4">
+                <form asp-action="EsqueciSenha" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="Email" class="form-label">E-mail cadastrado</label>
+                        <input asp-for="Email" class="form-control" placeholder="seu@email.com" autocomplete="email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-envelope me-2"></i>Enviar link de redefinição
+                        </button>
+                    </div>
+                </form>
+
+                <hr style="border-color:var(--color-border)" />
+                <p class="text-center mb-0 small" style="color:var(--color-text-muted)">
+                    Lembrou a senha?
+                    <a asp-action="Login" class="fw-semibold" style="color:var(--color-accent)">Voltar para o login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

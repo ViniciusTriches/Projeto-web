@@ -2,13 +2,17 @@ using System.Security.Claims;
 using Marketplace.Web.MVC.Models.ViewModels;
 using Marketplace.Web.MVC.Services.Carrinho;
 using Marketplace.Web.MVC.Services.Facades;
+using Marketplace.Web.MVC.Services.Perfil;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Marketplace.Web.MVC.Controllers;
 
 [Authorize]
-public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carrinhoService) : BaseController(carrinhoService)
+public class CheckoutController(
+    IMarketplaceFacade facade,
+    CarrinhoService carrinhoService,
+    IEnderecoService enderecoService) : BaseController(carrinhoService)
 {
     [HttpGet]
     public async Task<IActionResult> Index()
@@ -20,11 +24,28 @@ public class CheckoutController(IMarketplaceFacade facade, CarrinhoService carri
             return RedirectToAction("Index", "Carrinho");
         }
 
-        return View(new CheckoutViewModel
+        var vm = new CheckoutViewModel
         {
             Carrinho = carrinho,
             Transportadoras = await facade.ObterTransportadorasAsync()
-        });
+        };
+
+        if (Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        {
+            var endereco = enderecoService.Obter(userId);
+            if (endereco is not null)
+            {
+                vm.Cep = endereco.Cep;
+                vm.Logradouro = endereco.Logradouro;
+                vm.Numero = endereco.Numero;
+                vm.Complemento = endereco.Complemento;
+                vm.Bairro = endereco.Bairro;
+                vm.Cidade = endereco.Cidade;
+                vm.Estado = endereco.Estado;
+            }
+        }
+
+        return View(vm);
     }
 
     [HttpPost]

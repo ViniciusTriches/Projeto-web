@@ -179,6 +179,23 @@ body {
   border-color: var(--color-danger);
 }
 
+/* ── TOGGLE SENHA ── */
+.toggle-senha {
+  border-color: var(--color-border);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-muted);
+}
+
+.toggle-senha:hover {
+  background-color: var(--color-surface-2);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.input-group .form-control:focus {
+  z-index: 3;
+}
+
 /* ── ALERTAS ── */
 .alert-success {
   background-color: rgba(76, 175, 130, 0.15);
@@ -293,6 +310,36 @@ body {
 
 .dropdown-divider {
   border-color: var(--color-border);
+}
+
+/* ── NAV TABS (Perfil) ── */
+.nav-tabs {
+  border-bottom-color: var(--color-border);
+}
+
+.nav-tabs .nav-link {
+  color: var(--color-text-muted) !important;
+  border: 1px solid transparent;
+  border-radius: 8px 8px 0 0;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--color-accent) !important;
+  border-color: var(--color-border) var(--color-border) transparent;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--color-accent) !important;
+  background-color: var(--color-surface-2);
+  border-color: var(--color-border) var(--color-border) var(--color-surface-2);
+}
+
+.tab-content {
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 1.5rem;
 }
 
 /* ── FOOTER ── */

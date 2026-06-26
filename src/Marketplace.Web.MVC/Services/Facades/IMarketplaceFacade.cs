@@ -15,6 +15,8 @@ public interface IMarketplaceFacade
     Task<(UsuarioDto? Usuario, string? Erro)> RegistrarUsuarioAsync(CriarUsuarioRequest request);
     Task<UsuarioDto?> ObterPerfilAsync(Guid usuarioId, string accessToken);
     Task<UsuarioDto?> AtualizarPerfilAsync(Guid usuarioId, AtualizarUsuarioRequest request, string accessToken);
+    Task SolicitarResetSenhaAsync(string email);
+    Task<(bool Sucesso, string? Erro)> RedefinirSenhaAsync(string token, string novaSenha);
 
     Task<(ProdutoAvaliacaoDto? Avaliacao, string? Erro)> AvaliarProdutoAsync(CriarAvaliacaoDto dto, string accessToken);
 

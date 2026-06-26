@@ -2,71 +2,162 @@
 @using Marketplace.Web.MVC.Models.ApiContracts.Usuarios
 @{
     ViewData["Title"] = "Meu Perfil";
+    var u = Model.Usuario;
+    var estados = new[] { "AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO" };
 }
 
-<div class="row">
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm border-0 text-center p-4">
-            <div class="mb-3">
-                <i class="bi bi-person-circle text-primary" style="font-size:5rem;"></i>
+<div class="d-flex align-items-center gap-3 mb-4">
+    <i class="bi bi-person-circle" style="font-size:3rem;color:var(--color-accent)"></i>
+    <div>
+        <h4 class="fw-bold mb-0">@(u?.Nome ?? "Meu Perfil")</h4>
+        <small style="color:var(--color-text-muted)">@(u?.Email)</small>
+    </div>
+</div>
+
+<ul class="nav nav-tabs mb-0" id="perfilTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="dados-tab" data-bs-toggle="tab" data-bs-target="#dados" type="button" role="tab">
+            <i class="bi bi-person me-1"></i>Dados pessoais
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="endereco-tab" data-bs-toggle="tab" data-bs-target="#endereco" type="button" role="tab">
+            <i class="bi bi-geo-alt me-1"></i>Endereço de entrega
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="seguranca-tab" data-bs-toggle="tab" data-bs-target="#seguranca" type="button" role="tab">
+            <i class="bi bi-shield-lock me-1"></i>Segurança
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="perfilTabContent">
+
+    <!-- Aba 1: Dados pessoais -->
+    <div class="tab-pane fade show active" id="dados" role="tabpanel">
+        <form asp-action="AtualizarDadosPessoais" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 mb-3" role="alert"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nome</label>
+                    <input name="Usuario.Nome" value="@u?.Nome" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">E-mail</label>
+                    <input name="Usuario.Email" value="@u?.Email" type="email" class="form-control" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Documento</label>
+                    <input value="@u?.Documento" class="form-control" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tipo de Pessoa</label>
+                    <input value="@(u?.TipoPessoa == ETipoPessoa.PessoaFisica ? "Pessoa Física" : "Pessoa Jurídica")" class="form-control" readonly />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Telefone</label>
+                    <input name="Usuario.Telefone" value="@u?.Telefone" class="form-control" placeholder="(11) 99999-9999" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Membro desde</label>
+                    <input value="@u?.CriadoEm.ToString("dd/MM/yyyy")" class="form-control" readonly />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Status</label>
+                    <input value="@u?.Status" class="form-control" readonly />
+                </div>
             </div>
-            <h5 class="fw-bold">@Model.Nome</h5>
-            <span class="badge bg-secondary mb-2">@Model.Funcao</span>
-            <p class="text-muted small mb-1"><i class="bi bi-envelope me-1"></i>@Model.Email</p>
-            @if (!string.IsNullOrEmpty(Model.Telefone))
-            {
-                <p class="text-muted small mb-1"><i class="bi bi-telephone me-1"></i>@Model.Telefone</p>
-            }
-            <p class="text-muted small mb-1">
-                <i class="bi bi-calendar me-1"></i>Membro desde @Model.CriadoEm.ToString("MMM yyyy")
-            </p>
-            <span class="badge @(Model.Status == EUsuarioStatus.Ativo ? "bg-success" : "bg-danger")">
-                @Model.Status
-            </span>
-        </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-2"></i>Salvar alterações
+                </button>
+            </div>
+        </form>
     </div>
 
-    <div class="col-md-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white border-0 pt-4 pb-0">
-                <h5 class="fw-bold"><i class="bi bi-pencil-square me-2"></i>Editar Perfil</h5>
+    <!-- Aba 2: Endereço de entrega -->
+    <div class="tab-pane fade" id="endereco" role="tabpanel">
+        <form asp-action="AtualizarEndereco" method="post">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">CEP</label>
+                    <input name="Endereco.Cep" value="@Model.Endereco.Cep" class="form-control" placeholder="00000-000" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Logradouro</label>
+                    <input name="Endereco.Logradouro" value="@Model.Endereco.Logradouro" class="form-control" placeholder="Rua, Av..." />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Número</label>
+                    <input name="Endereco.Numero" value="@Model.Endereco.Numero" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Complemento <span style="color:var(--color-text-muted);font-weight:400">(opcional)</span></label>
+                    <input name="Endereco.Complemento" value="@Model.Endereco.Complemento" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Bairro</label>
+                    <input name="Endereco.Bairro" value="@Model.Endereco.Bairro" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Cidade</label>
+                    <input name="Endereco.Cidade" value="@Model.Endereco.Cidade" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Estado</label>
+                    <select name="Endereco.Estado" class="form-select">
+                        <option value="">Selecione</option>
+                        @foreach (var uf in estados)
+                        {
+                            if (uf == Model.Endereco.Estado)
+                            {
+                                <option value="@uf" selected>@uf</option>
+                            }
+                            else
+                            {
+                                <option value="@uf">@uf</option>
+                            }
+                        }
+                    </select>
+                </div>
             </div>
-            <div class="card-body">
-                <form asp-action="Perfil" method="post">
-                    <input type="hidden" asp-for="Id" />
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="Nome" class="form-label fw-semibold">Nome</label>
-                        <input asp-for="Nome" class="form-control" />
-                        <span asp-validation-for="Nome" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label fw-semibold">E-mail</label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger small"></span>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Documento</label>
-                        <input value="@Model.Documento" class="form-control" readonly />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Tipo de Pessoa</label>
-                        <input value="@(Model.TipoPessoa == ETipoPessoa.PessoaFisica ? "Pessoa Física" : "Pessoa Jurídica")" class="form-control" readonly />
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save me-2"></i>Salvar Alterações
-                    </button>
-                </form>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-geo-alt me-2"></i>Salvar endereço
+                </button>
             </div>
-        </div>
+        </form>
     </div>
+
+    <!-- Aba 3: Segurança -->
+    <div class="tab-pane fade" id="seguranca" role="tabpanel">
+        <p style="color:var(--color-text-muted)" class="mb-4">
+            Para alterar sua senha, utilizamos o fluxo de redefinição por e-mail.
+        </p>
+        <a asp-action="EsqueciSenha" class="btn btn-outline-primary">
+            <i class="bi bi-key me-2"></i>Redefinir minha senha
+        </a>
+    </div>
+
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Restaura a aba ativa após redirect (por ex. após salvar endereço)
+        const activeTab = sessionStorage.getItem('perfilActiveTab');
+        if (activeTab) {
+            const tab = document.querySelector('#perfilTabs button[data-bs-target="' + activeTab + '"]');
+            if (tab) bootstrap.Tab.getOrCreateInstance(tab).show();
+        }
+        document.querySelectorAll('#perfilTabs button').forEach(function (btn) {
+            btn.addEventListener('shown.bs.tab', function (e) {
+                sessionStorage.setItem('perfilActiveTab', e.target.getAttribute('data-bs-target'));
+            });
+        });
+    </script>
 }

@@ -23,10 +23,19 @@
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-2">
                         <label asp-for="Senha" class="form-label">Senha</label>
-                        <input asp-for="Senha" class="form-control" placeholder="••••••••" autocomplete="current-password" />
+                        <div class="input-group">
+                            <input asp-for="Senha" type="password" class="form-control" id="campoSenha" placeholder="••••••••" autocomplete="current-password" />
+                            <button type="button" class="btn btn-outline-secondary toggle-senha" data-target="campoSenha" tabindex="-1">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                         <span asp-validation-for="Senha" class="text-danger small"></span>
+                    </div>
+
+                    <div class="text-end mb-4">
+                        <a asp-action="EsqueciSenha" class="text-decoration-none small" style="color:var(--color-accent)">Esqueci minha senha</a>
                     </div>
 
                     <div class="d-grid mb-3">

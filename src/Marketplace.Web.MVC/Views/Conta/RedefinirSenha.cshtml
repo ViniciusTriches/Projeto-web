@@ -1,0 +1,61 @@
+@model Marketplace.Web.MVC.Models.ViewModels.RedefinirSenhaViewModel
+@{
+    ViewData["Title"] = "Redefinir senha";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="text-center mb-4">
+            <i class="bi bi-key" style="font-size:2.5rem;color:var(--color-accent)"></i>
+            <h3 class="mt-2 fw-bold">Nova senha</h3>
+            <p class="small" style="color:var(--color-text-muted)">Escolha uma senha segura para sua conta</p>
+        </div>
+
+        <div class="card shadow border-0" style="max-width:420px;margin:0 auto;">
+            <div class="card-body p-4">
+                <form asp-action="RedefinirSenha" method="post">
+                    <input type="hidden" asp-for="Token" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="NovaSenha" class="form-label">Nova senha</label>
+                        <div class="input-group">
+                            <input asp-for="NovaSenha" type="password" class="form-control" id="campoNovaSenha" placeholder="Ex: Teste@123" />
+                            <button type="button" class="btn btn-outline-secondary toggle-senha" data-target="campoNovaSenha" tabindex="-1">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Mínimo 8 caracteres, com maiúscula, número e caractere especial</div>
+                        <span asp-validation-for="NovaSenha" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmarSenha" class="form-label">Confirmar nova senha</label>
+                        <div class="input-group">
+                            <input asp-for="ConfirmarSenha" type="password" class="form-control" id="campoConfirmarSenha" placeholder="Repita a nova senha" />
+                            <button type="button" class="btn btn-outline-secondary toggle-senha" data-target="campoConfirmarSenha" tabindex="-1">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmarSenha" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle me-2"></i>Redefinir senha
+                        </button>
+                    </div>
+                </form>
+
+                <hr style="border-color:var(--color-border)" />
+                <p class="text-center mb-0 small" style="color:var(--color-text-muted)">
+                    <a asp-action="Login" class="fw-semibold" style="color:var(--color-accent)">Voltar para o login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
