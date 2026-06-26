@@ -68,6 +68,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Conta/Login";
         options.LogoutPath = "/Conta/Logout";
         options.ExpireTimeSpan = TimeSpan.FromHours(2);
+        options.SlidingExpiration = true;
     });
 
 builder.Services.AddDistributedMemoryCache();

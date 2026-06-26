@@ -210,12 +210,26 @@ public class ContaController(
 
     private async Task SignInWithResultado(Models.ViewModels.LoginResultado resultado)
     {
+        // Garante ClaimTypes.Name a partir do campo Nome da resposta da API (não do JWT),
+        // pois o JWT pode usar claim "unique_name" ou outro alias que o JwtDecoder não normalize.
         var claims = new List<Claim>(resultado.Principal.Claims)
         {
+            new(ClaimTypes.Name, resultado.Nome),
             new("AccessToken", resultado.AccessToken),
             new("RefreshToken", resultado.RefreshToken)
         };
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        var claimsUnicos = claims
+            .GroupBy(c => c.Type)
+            .Select(g => g.First())
+            .ToList();
+
+        var identity = new ClaimsIdentity(
+            claimsUnicos,
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            nameType: ClaimTypes.Name,
+            roleType: ClaimTypes.Role);
+
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity),
             new AuthenticationProperties { IsPersistent = true, ExpiresUtc = resultado.ExpiresIn });
