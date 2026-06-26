@@ -13,22 +13,40 @@ builder.Services.AddControllersWithViews();
 var config = builder.Configuration;
 
 builder.Services.AddHttpClient<IUsuariosClient, UsuariosClient>(c =>
-    c.BaseAddress = new Uri(config["Microservicos:Usuarios"]!));
+{
+    c.BaseAddress = new Uri(config["Microservicos:Usuarios"]!);
+    c.Timeout = TimeSpan.FromSeconds(8);
+});
 
 builder.Services.AddHttpClient<IProdutosClient, ProdutosClient>(c =>
-    c.BaseAddress = new Uri(config["Microservicos:Produtos"]!));
+{
+    c.BaseAddress = new Uri(config["Microservicos:Produtos"]!);
+    c.Timeout = TimeSpan.FromSeconds(8);
+});
 
 builder.Services.AddHttpClient<ICategoriasClient, CategoriasClient>(c =>
-    c.BaseAddress = new Uri(config["Microservicos:Categorias"]!));
+{
+    c.BaseAddress = new Uri(config["Microservicos:Categorias"]!);
+    c.Timeout = TimeSpan.FromSeconds(8);
+});
 
 builder.Services.AddHttpClient<IPedidosClient, PedidosClient>(c =>
-    c.BaseAddress = new Uri(config["Microservicos:Pedidos"]!));
+{
+    c.BaseAddress = new Uri(config["Microservicos:Pedidos"]!);
+    c.Timeout = TimeSpan.FromSeconds(8);
+});
 
 builder.Services.AddHttpClient<IPagamentosClient, PagamentosClient>(c =>
-    c.BaseAddress = new Uri(config["Microservicos:Pagamentos"]!));
+{
+    c.BaseAddress = new Uri(config["Microservicos:Pagamentos"]!);
+    c.Timeout = TimeSpan.FromSeconds(8);
+});
 
 builder.Services.AddHttpClient<IAvaliacoesClient, AvaliacoesClient>(c =>
-    c.BaseAddress = new Uri(config["Microservicos:Avaliacoes"]!));
+{
+    c.BaseAddress = new Uri(config["Microservicos:Avaliacoes"]!);
+    c.Timeout = TimeSpan.FromSeconds(8);
+});
 
 builder.Services.AddHttpClient<IEstatisticasClient, EstatisticasClient>(c =>
 {

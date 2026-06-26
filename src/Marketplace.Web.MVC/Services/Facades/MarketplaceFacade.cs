@@ -28,6 +28,8 @@ public class MarketplaceFacade(
                 ? produtos.ListarAsync()
                 : produtos.BuscarAsync(busca);
 
+            // Cada client captura suas próprias exceções e retorna fallback seguro (lista vazia ou null),
+            // portanto o WhenAll nunca lança mesmo que ambas as APIs estejam indisponíveis.
             var (listaProdutos, listaCategorias) = await (tarefaProdutos, categorias.ListarAsync()).WhenAll();
 
             vm.Produtos = listaProdutos ?? [];
