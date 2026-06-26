@@ -5,6 +5,7 @@ using Marketplace.Web.MVC.Services.Facades;
 using Marketplace.Web.MVC.Services.Interfaces;
 using Marketplace.Web.MVC.Services.Perfil;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +85,13 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+// KnownNetworks/KnownProxies vazios = confia em qualquer proxy.
+// Aceitável pois o Render gerencia a rede do container; em produção real restringir aos IPs do proxy.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 if (!app.Environment.IsDevelopment())
 {
