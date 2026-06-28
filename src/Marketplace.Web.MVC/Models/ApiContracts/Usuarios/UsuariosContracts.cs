@@ -43,12 +43,15 @@ public record ResetarSenhaRequest(string Email, string Token, string NovaSenha);
 
 public record LoginResponse(
     string AccessToken,
+    DateTime AccessTokenExpiresIn,
     string RefreshToken,
-    DateTime ExpiresIn,
+    DateTime RefreshTokenExpiresIn,
     Guid UsuarioId,
     string Nome,
     string Email);
 
+// TODO: verificar se /api/autenticacao/refresh-token também renomeou o campo de expiração
+// (igual /login que virou accessTokenExpiresIn) antes de usar refresh token.
 public record TokenDto(string AccessToken, string RefreshToken, DateTime ExpiresIn);
 
 public record UsuarioDto(

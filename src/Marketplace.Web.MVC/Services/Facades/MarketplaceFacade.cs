@@ -86,7 +86,7 @@ public class MarketplaceFacade(
                 Principal = principal,
                 AccessToken = resp.AccessToken,
                 RefreshToken = resp.RefreshToken,
-                ExpiresIn = resp.ExpiresIn,
+                ExpiresIn = resp.AccessTokenExpiresIn,
                 Nome = resp.Nome
             }, null);
         }
