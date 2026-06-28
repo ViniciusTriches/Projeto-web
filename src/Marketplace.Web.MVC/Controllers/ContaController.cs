@@ -15,8 +15,7 @@ namespace Marketplace.Web.MVC.Controllers;
 public class ContaController(
     IMarketplaceFacade facade,
     CarrinhoService carrinhoService,
-    IEnderecoService enderecoService,
-    ILogger<ContaController> logger) : BaseController(carrinhoService)
+    IEnderecoService enderecoService) : BaseController(carrinhoService)
 {
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
@@ -30,8 +29,6 @@ public class ContaController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        logger.LogInformation("Login action iniciada. Response.HasStarted: {HasStarted}", HttpContext.Response.HasStarted);
-
         if (!ModelState.IsValid) return View(model);
 
         var (resultado, erro) = await facade.AutenticarAsync(model.Email, model.Senha);
@@ -213,9 +210,6 @@ public class ContaController(
 
     private async Task SignInWithResultado(Models.ViewModels.LoginResultado resultado)
     {
-        logger.LogInformation("Iniciando SignInAsync para usuario {Nome}, ExpiresIn={ExpiresIn}",
-            resultado.Nome, resultado.ExpiresIn);
-
         var claims = resultado.Principal.Claims
             .Where(c => c.Type != ClaimTypes.Name && c.Type != "AccessToken" && c.Type != "RefreshToken")
             .ToList();
@@ -224,43 +218,19 @@ public class ContaController(
         claims.Add(new Claim("AccessToken", resultado.AccessToken));
         claims.Add(new Claim("RefreshToken", resultado.RefreshToken));
 
-        logger.LogInformation("Claims montados: {Claims}",
-            string.Join(", ", claims.Select(c => $"{c.Type}={c.Value}")));
-
         var identity = new ClaimsIdentity(
             claims,
             authenticationType: CookieAuthenticationDefaults.AuthenticationScheme,
             nameType: ClaimTypes.Name,
             roleType: ClaimTypes.Role);
 
-        var principal = new ClaimsPrincipal(identity);
-
-        logger.LogInformation("Identity.IsAuthenticated antes do SignInAsync: {IsAuth}, Identity.Name: {Name}",
-            principal.Identity?.IsAuthenticated, principal.Identity?.Name);
-
-        try
-        {
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal,
-                new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = resultado.ExpiresIn
-                });
-
-            logger.LogInformation("SignInAsync concluido sem excecao. Response.HasStarted: {HasStarted}",
-                HttpContext.Response.HasStarted);
-
-            if (HttpContext.Response.Headers.TryGetValue("Set-Cookie", out var setCookieHeaders))
-                logger.LogInformation("Set-Cookie presente na resposta: {Headers}", string.Join(" | ", setCookieHeaders!));
-            else
-                logger.LogWarning("Nenhum header Set-Cookie encontrado na resposta apos SignInAsync!");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "EXCECAO durante SignInAsync para usuario {Nome}", resultado.Nome);
-            throw;
-        }
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity),
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = resultado.ExpiresIn
+            });
     }
 }

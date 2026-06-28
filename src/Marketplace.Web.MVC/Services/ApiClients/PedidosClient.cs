@@ -11,8 +11,11 @@ public class PedidosClient(HttpClient http, ILogger<PedidosClient> logger) : IPe
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            return await http.GetFromJsonAsync<CarrinhoRetornoDto>($"/api/carrinho/{usuarioId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/api/carrinho/{usuarioId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var resp = await http.SendAsync(request);
+            if (!resp.IsSuccessStatusCode) return null;
+            return await resp.Content.ReadFromJsonAsync<CarrinhoRetornoDto>();
         }
         catch (Exception ex)
         {
@@ -25,8 +28,10 @@ public class PedidosClient(HttpClient http, ILogger<PedidosClient> logger) : IPe
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.PostAsJsonAsync("/api/carrinho/AtualizarStatusPedido", dto);
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/carrinho/AtualizarStatusPedido");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Content = JsonContent.Create(dto);
+            var resp = await http.SendAsync(request);
             return resp.IsSuccessStatusCode;
         }
         catch (Exception ex)
@@ -40,8 +45,9 @@ public class PedidosClient(HttpClient http, ILogger<PedidosClient> logger) : IPe
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.DeleteAsync($"/api/carrinho/LimparCarrinho/{usuarioId}");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/carrinho/LimparCarrinho/{usuarioId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var resp = await http.SendAsync(request);
             return resp.IsSuccessStatusCode;
         }
         catch (Exception ex)
@@ -55,8 +61,9 @@ public class PedidosClient(HttpClient http, ILogger<PedidosClient> logger) : IPe
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.DeleteAsync($"/api/carrinho/DeletePedido/{pedidoId}");
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/carrinho/DeletePedido/{pedidoId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var resp = await http.SendAsync(request);
             return resp.IsSuccessStatusCode;
         }
         catch (Exception ex)

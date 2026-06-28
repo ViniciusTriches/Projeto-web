@@ -13,10 +13,10 @@ public abstract class BaseController : Controller
         CarrinhoSvc = carrinhoService;
     }
 
-    public override async void OnActionExecuting(ActionExecutingContext context)
+    public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        base.OnActionExecuting(context);
         var carrinho = await CarrinhoSvc.ObterCarrinhoAsync();
         ViewBag.CarrinhoQtd = carrinho.TotalItens;
+        await next();
     }
 }

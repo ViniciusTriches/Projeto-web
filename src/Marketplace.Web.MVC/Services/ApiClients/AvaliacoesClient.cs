@@ -24,8 +24,10 @@ public class AvaliacoesClient(HttpClient http, ILogger<AvaliacoesClient> logger)
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.PostAsJsonAsync("/api/avaliacao", dto);
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/avaliacao");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Content = JsonContent.Create(dto);
+            var resp = await http.SendAsync(request);
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<ProdutoAvaliacaoDto>();
         }

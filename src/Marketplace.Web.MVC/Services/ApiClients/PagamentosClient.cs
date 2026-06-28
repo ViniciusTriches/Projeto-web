@@ -24,8 +24,10 @@ public class PagamentosClient(HttpClient http, ILogger<PagamentosClient> logger)
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.PostAsJsonAsync("/api/Frete/calcular", dto);
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Frete/calcular");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Content = JsonContent.Create(dto);
+            var resp = await http.SendAsync(request);
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<object>();
         }
@@ -40,8 +42,10 @@ public class PagamentosClient(HttpClient http, ILogger<PagamentosClient> logger)
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var resp = await http.PostAsJsonAsync("/api/Pagamento", dto);
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Pagamento");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Content = JsonContent.Create(dto);
+            var resp = await http.SendAsync(request);
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<PagamentoDto>();
         }
@@ -56,9 +60,10 @@ public class PagamentosClient(HttpClient http, ILogger<PagamentosClient> logger)
     {
         try
         {
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            var body = new { PagamentoId = pagamentoId };
-            var resp = await http.PostAsJsonAsync("/api/Pagamento/transacao", body);
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/Pagamento/transacao");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            request.Content = JsonContent.Create(new { PagamentoId = pagamentoId });
+            var resp = await http.SendAsync(request);
             if (!resp.IsSuccessStatusCode) return null;
             return await resp.Content.ReadFromJsonAsync<TransacaoPagamentoDto>();
         }

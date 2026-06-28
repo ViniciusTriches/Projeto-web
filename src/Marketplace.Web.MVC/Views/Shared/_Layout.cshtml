@@ -50,20 +50,21 @@
             </form>
 
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Carrinho" asp-action="Index">
-                            <i class="bi bi-cart3"></i>
-                            @{
-                                var qtd = ViewBag.CarrinhoQtd as int? ?? 0;
-                            }
-                            @if (qtd > 0)
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Carrinho" asp-action="Index">
+                        <i class="bi bi-cart3"></i>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            var qtd = ViewBag.CarrinhoQtd as int? ?? 0;
+                            if (qtd > 0)
                             {
                                 <span class="badge bg-danger rounded-pill">@qtd</span>
                             }
-                        </a>
-                    </li>
+                        }
+                    </a>
+                </li>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> @User.Identity.Name

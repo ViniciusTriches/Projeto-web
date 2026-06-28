@@ -89,7 +89,7 @@ public class CheckoutController(
             NumeroParcelas = model.NumeroParcelas > 0 ? model.NumeroParcelas : 1,
             UsuarioId = usuarioId,
             AccessToken = accessToken,
-            CpfCliente = User.FindFirstValue(ClaimTypes.Email)
+            CpfCliente = model.CpfDocumento
         });
 
         if (!resultado.Sucesso)

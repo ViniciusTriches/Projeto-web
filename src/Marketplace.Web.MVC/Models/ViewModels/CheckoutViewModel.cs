@@ -31,6 +31,10 @@ public class CheckoutViewModel
     public MetodoPagamento MetodoPagamento { get; set; } = MetodoPagamento.Pix;
 
     public int NumeroParcelas { get; set; } = 1;
+
+    [Required(ErrorMessage = "CPF ou CNPJ obrigatório")]
+    [Display(Name = "CPF / CNPJ")]
+    public string CpfDocumento { get; set; } = string.Empty;
 }
 
 public class ConfirmacaoViewModel

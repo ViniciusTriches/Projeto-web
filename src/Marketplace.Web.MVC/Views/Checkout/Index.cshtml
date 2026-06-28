@@ -117,6 +117,11 @@
                     <i class="bi bi-wallet2 me-2 text-primary"></i>Forma de Pagamento
                 </div>
                 <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="CpfDocumento" class="form-label fw-semibold">CPF / CNPJ</label>
+                        <input asp-for="CpfDocumento" class="form-control" placeholder="000.000.000-00" />
+                        <span asp-validation-for="CpfDocumento" class="text-danger small"></span>
+                    </div>
                     <div class="row g-3 mb-3">
                         @foreach (MetodoPagamento mp in Enum.GetValues(typeof(MetodoPagamento)))
                         {
